@@ -1,0 +1,9 @@
+easygui==0.98.1
+sklearn==0.0
+opencv-python==3.4.0.14
+imutils==0.5.3
+scikit-image==0.14.5
+scikit-learn==0.20.4
+Pillow==6.2.2
+scipy==1.2.3
+requests==2.23.0
