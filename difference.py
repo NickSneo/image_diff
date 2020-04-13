@@ -10,7 +10,7 @@ DIFF_IMG_FILE = "diff_img.png"
 
 
 def diff(
-    im1_file, im2_file, delete_diff_file=False, diff_img_file=None, ignore_alpha=False
+    im1, im2, delete_diff_file=False, diff_img_file=None, ignore_alpha=False
 ):
     """
     Calculate the difference between two images of the same size
@@ -24,8 +24,8 @@ def diff(
     if not diff_img_file:
         diff_img_file = DIFF_IMG_FILE
 
-    im1 = Image.open(im1_file)
-    im2 = Image.open(im2_file)
+    # im1 = Image.open(im1_file)
+    # im2 = Image.open(im2_file)
 
     # Ensure we have the same color channels (RGBA vs RGB)
     if im1.mode != im2.mode:
