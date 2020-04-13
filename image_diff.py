@@ -1,4 +1,4 @@
-# python image_diff.py --first images/original_01.png --second images/modified_01.png
+#IOT-project SPOT THE DIFFERENCE
 
 from skimage.measure import compare_ssim
 from PIL import Image, ImageChops, ImageDraw
@@ -81,7 +81,7 @@ def getBestPatchesAuto(sourceImg, checkImg, patches):
     return bestPatches
 
 
-# GUI
+############# GUI
 applicationSwitch = True
 file1Ver = False
 file2Ver = False
@@ -116,7 +116,7 @@ while applicationSwitch:
     elif selection == 2:
 
 
-
+# python image_diff.py --first images/original_01.png --second images/modified_01.png
 # construct the argument parse and parse the arguments
 # ap = argparse.ArgumentParser()
 # ap.add_argument("-f", "--first", required=True,
@@ -130,8 +130,6 @@ while applicationSwitch:
 # imageB = cv2.imread(args["second"],1)
 
         imageA, imageB = downscaleImages(imageA, imageB)
-
-
 
 # pil image difference  and chopping
 
@@ -168,14 +166,9 @@ while applicationSwitch:
         c.save('result.png')
 ###################################
 
-
-
-
-
-
 # convert the images to grayscale
-# next line make error
 # OpenCV Error: Assertion failed (scn == 3 || scn == 4) in cvtColor
+        
         grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
         grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
 
@@ -189,6 +182,7 @@ while applicationSwitch:
 # threshold the difference image, followed by finding contours to
 # obtain the regions of the two input images that differ
         thresh = cv2.threshold(diff, 0, 255,cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+        
 # cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 # cnts = cnts[1] if imutils.is_cv3() else cnts[0]
 # contours = contours[1] if imutils.is_cv3() else contours[0]
@@ -196,8 +190,6 @@ while applicationSwitch:
 
         patches = getAllPatches(thresh)
         bestPatches = getBestPatchesAuto(grayA, grayB, patches)
-
-
 
 # loop over the contours
         for (x, y, w, h) in bestPatches:

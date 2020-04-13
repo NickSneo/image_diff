@@ -1,7 +1,4 @@
-"""
-Return the % difference of two given images.
-Only works with images of the same file type and color channels.
-"""
+# Return the difference ratio of two given images.
 
 from __future__ import print_function
 from PIL import Image, ImageChops, ImageStat
@@ -15,12 +12,8 @@ def diff(
     """
     Calculate the difference between two images of the same size
     by comparing channel values at the pixel level.
-
-    `delete_diff_file`: removes the diff image after ratio found
-    `diff_img_file`: filename to store diff image
-    `ignore_alpha`: ignore the alpha channel for ratio calculation, and set the diff
-        image's alpha to fully opaque
     """
+
     if not diff_img_file:
         diff_img_file = DIFF_IMG_FILE
 
@@ -48,15 +41,12 @@ def diff(
         else:
             extension = diff_img_file.split(".")[-1]
         if extension in ("jpg", "jpeg"):
-            # For some reason, save() thinks "jpg" is invalid
-            # This doesn't affect the image's saved filename
             extension = "jpeg"
             diff_img = diff_img.convert("RGB")
         diff_img.save(diff_img_file, extension)
 
     # Calculate difference as a ratio.
     stat = ImageStat.Stat(diff_img)
-    # stat.mean can be [r,g,b] or [r,g,b,a].
     removed_channels = 1 if ignore_alpha and len(stat.mean) == 4 else 0
     num_channels = len(stat.mean) - removed_channels
     sum_channel_values = sum(stat.mean[:num_channels])
