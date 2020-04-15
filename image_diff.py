@@ -1,4 +1,6 @@
-#IOT-project SPOT THE DIFFERENCE
+#IOT-project - SPOT THE DIFFERENCE(Main Application) #################
+# Made by Nischal and Purvi 
+
 
 from skimage.measure import compare_ssim
 from PIL import Image, ImageChops, ImageDraw
@@ -12,7 +14,6 @@ import difference
 import easygui
 
 # scaling function
-
 
 def downscaleImages(img1, img2):
     height1, width1 = img1.shape[:2]
@@ -35,7 +36,7 @@ def downscaleImages(img1, img2):
 
     return newImg1, newImg2
 
-
+# getting Patches of differences
 def getAllPatches(mask):
     patches = []
 
@@ -54,7 +55,8 @@ def getAllPatches(mask):
 
     return patches
 
-
+#Template Matching to get the Best Match
+#1 means most similar and 0 means most different 
 def getBestMatch(img, patch):
     result = cv2.matchTemplate(
         image=img, templ=patch, method=cv2.TM_CCOEFF_NORMED)
@@ -63,7 +65,7 @@ def getBestMatch(img, patch):
 
     return ((x, y), value)
 
-
+#among all the the patches selecting the best matching patches with a Threshold of 0.8
 def getBestPatches(sourceImg, checkImg, patches, threshold=0.8):
     bestPatches = []
     for (x, y, w, h) in patches:
@@ -81,7 +83,7 @@ def getBestPatchesAuto(sourceImg, checkImg, patches):
     return bestPatches
 
 
-############# GUI
+############# Easy GUI for selecting the Files
 applicationSwitch = True
 file1Ver = False
 file2Ver = False
@@ -115,26 +117,22 @@ while applicationSwitch:
             file2Ver = True
     elif selection == 2:
 
+#Commented Code for using application through commandline 
+#in case gui is not working in you machine the uncomment this code
 
 # python image_diff.py --first images/original_01.png --second images/modified_01.png
-# construct the argument parse and parse the arguments
 # ap = argparse.ArgumentParser()
 # ap.add_argument("-f", "--first", required=True,
 # 	help="first input image")
 # ap.add_argument("-s", "--second", required=True,
 # 	help="second")
 # args = vars(ap.parse_args())
-
 # # load the two input images
 # imageA = cv2.imread(args["first"],1)
 # imageB = cv2.imread(args["second"],1)
 
         imageA, imageB = downscaleImages(imageA, imageB)
 
-# pil image difference  and chopping
-
-        # img1 = Image.open(args["first"])
-        # img2 = Image.open(args["second"])
 
 ########### difference ratio calculation using module difference.py ##########
         ratio = difference.diff(img1,img2)
@@ -148,7 +146,7 @@ while applicationSwitch:
             diff_image.show()
 
 
-# PIL second spot the difference 
+# PIL(Pillow) image difference  and chopping
         point_table = ([0] + ([255] * 255))
 
         def black_or_b(a, b):
@@ -159,22 +157,16 @@ while applicationSwitch:
             new.paste(b, mask=diff)
             return new
 
-        # a = Image.open(args["first"])
-        # b = Image.open(args["second"])
         c = black_or_b(img1, img2)
         c.show()
         c.save('result.png')
-###################################
 
 # convert the images to grayscale
-# OpenCV Error: Assertion failed (scn == 3 || scn == 4) in cvtColor
         
         grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
         grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
 
-# compute the Structural Similarity Index (SSIM) between the two
-# images, ensuring that the difference image is returned
-        print("Detecting Differences")
+# compute the Structural Similarity Index (SSIM) between the two images
         (score, diff) = compare_ssim(grayA, grayB, full=True)
         diff = (diff * 255).astype("uint8")
         print("SSIM: {}".format(score))
@@ -183,22 +175,17 @@ while applicationSwitch:
 # obtain the regions of the two input images that differ
         thresh = cv2.threshold(diff, 0, 255,cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
         
-# cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-# cnts = cnts[1] if imutils.is_cv3() else cnts[0]
-# contours = contours[1] if imutils.is_cv3() else contours[0]
-# mask = getMask(grayA, grayB)
 
+# mask = getMask(grayA, grayB)
+#Finding the Patches among all patches obtained
         patches = getAllPatches(thresh)
         bestPatches = getBestPatchesAuto(grayA, grayB, patches)
 
 # loop over the contours
         for (x, y, w, h) in bestPatches:
-    	    # if w < 5 or h < 5:
-            #     continue
-	# compute the bounding box of the contour and then draw the
+    # compute the bounding box of the contour and then draw the
 	# bounding box on both input images to represent where the two
-	# images differ
-	# (x, y, w, h) = cv2.boundingRect(c)
+	
 	        cv2.rectangle(imageA, (x, y), (x + w, y + h), (0, 0, 255), 2)
 	        cv2.rectangle(imageB, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
@@ -206,7 +193,7 @@ while applicationSwitch:
         cv2.imshow("Original", imageA)
         cv2.imshow("Modified", imageB)
         cv2.imshow("Diff", diff)
-# cv2.imshow("Thresh", thresh)
+        cv2.imshow("Thresh", thresh)
         diff_image.save("42_diff.png")
         cv2.waitKey(0)
         cv2.destroyAllWindows()

@@ -1,4 +1,5 @@
-# Return the difference ratio of two given images.
+# script to find Difference Ratio
+# Returns the difference ratio of two given images.
 
 from __future__ import print_function
 from PIL import Image, ImageChops, ImageStat
@@ -6,9 +7,7 @@ from PIL import Image, ImageChops, ImageStat
 DIFF_IMG_FILE = "diff_img.png"
 
 
-def diff(
-    im1, im2, delete_diff_file=False, diff_img_file=None, ignore_alpha=False
-):
+def diff(im1, im2, delete_diff_file=False, diff_img_file=None, ignore_alpha=False):
     """
     Calculate the difference between two images of the same size
     by comparing channel values at the pixel level.
@@ -16,9 +15,6 @@ def diff(
 
     if not diff_img_file:
         diff_img_file = DIFF_IMG_FILE
-
-    # im1 = Image.open(im1_file)
-    # im2 = Image.open(im2_file)
 
     # Ensure we have the same color channels (RGBA vs RGB)
     if im1.mode != im2.mode:
