@@ -5,6 +5,7 @@
 from skimage.measure import compare_ssim
 from PIL import Image, ImageChops, ImageDraw
 from math import atan
+from webcam import capture
 import argparse
 import imutils
 import cv2
@@ -66,7 +67,7 @@ def getBestMatch(img, patch):
     return ((x, y), value)
 
 #among all the the patches selecting the best matching patches with a Threshold of 0.8
-def getBestPatches(sourceImg, checkImg, patches, threshold=0.8):
+def getBestPatches(sourceImg, checkImg, patches, threshold=0.95):
     bestPatches = []
     for (x, y, w, h) in patches:
         patch = sourceImg[y: y + h, x: x + w]
@@ -89,30 +90,32 @@ file1Ver = False
 file2Ver = False
 while applicationSwitch:
     title = 'Difference Checker'
-    instruction = 'Please load image 1 and 2 then begin.'
+    instruction = 'Please Capture image 1 and 2 then begin.'
 
     if file1Ver == False or file2Ver == False:
-        buttons = ['Load Image 1', 'Load Image 2']
+        buttons = ['Capture Image 1', 'Capture Image 2']
     else:
-        buttons = ['Load Image 1', 'Load Image 2', 'Begin Application']
+        buttons = ['Capture Image 1', 'Capture Image 2', 'Begin Application']
 
     selection = easygui.indexbox(msg = instruction, title = title, choices = buttons)
 
     if selection == 0:
-        file1 = easygui.fileopenbox()
+        file_name1 = 'saved_img1.png'
+        file1 = capture(file_name1)
         imageA = cv2.imread(file1)
         img1 = Image.open(file1)
 
         if img1 is None:
-            easygui.msgbox("Please select image files only!")
+            easygui.msgbox("Please Try Again!")
         else:
             file1Ver = True
     elif selection == 1:
-        file2 = easygui.fileopenbox()
+        file_name2 = 'saved_img2.png'
+        file2 = capture(file_name2)
         imageB = cv2.imread(file2)
         img2 = Image.open(file2)
         if img2 is None:
-            easygui.msgbox("Please select image files only!")
+            easygui.msgbox("Please Try Again!")
         else:
             file2Ver = True
     elif selection == 2:
@@ -194,7 +197,7 @@ while applicationSwitch:
         cv2.imshow("Modified", imageB)
         cv2.imshow("Diff", diff)
         cv2.imshow("Thresh", thresh)
-        diff_image.save("42_diff.png")
+        diff_image.save("diff.png")
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         applicationSwitch = False
